@@ -46,7 +46,7 @@ async def do_predict(data: InputData):
         data.pain,
         data.today,
         records_tuple
-    )
+        }
     return result
 
 @app.post("/result")
