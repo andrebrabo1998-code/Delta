@@ -3,15 +3,17 @@ from pydantic import BaseModel
 import asyncio
 
 from motor_fast import predict
-from storage import load, append, now_iso
+from storage import append, now_iso
 
 app = FastAPI(title="Motor de Predição de Ação")
+
 
 class InputData(BaseModel):
     problem: str
     goal: str
     pain: str
     today: str
+
 
 class ResultData(BaseModel):
     problem: str
@@ -20,9 +22,11 @@ class ResultData(BaseModel):
     result_score: int
     would_repeat: bool
 
+
 @app.get("/")
 def health():
     return {"ok": True}
+
 
 @app.post("/fast")
 def fast():
@@ -32,10 +36,10 @@ def fast():
         "confidence": 0.3
     }
 
+
 @app.post("/predict")
 async def do_predict(data: InputData):
-    records = load()
-    records_tuple = tuple(tuple(sorted(r.items())) for r in records)
+    records_tuple = tuple()
 
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(
@@ -46,8 +50,9 @@ async def do_predict(data: InputData):
         data.pain,
         data.today,
         records_tuple
-        }
+    )
     return result
+
 
 @app.post("/result")
 def save_result(data: ResultData):
